@@ -64,8 +64,33 @@ app.post("/signup",(req,res)=>{
         password:req.body.password
     }
     User.create(newUser,(err,createdData)=>{
+        if(!err)
         console.log(createdData);
+        else{
+            res.send(err);
+        }
     })
+})
+app.get("/login",(req,res)=>{
+    res.render("login.ejs");
+})
+app.post("/login",(req,res)=>{
+    var reqdRollNo=req.body.rollNo.toString();
+    User.findOne({rollNo:reqdRollNo},(err,foundData)=>{
+        bcrypt.compare(req.body.password, foundData.password , function(err, bcryptres) {
+            if(bcryptres==true){
+                res.send("success");
+            }
+            else if(err){
+                res.send(err);
+            }
+            else{
+                res.send("combination doesnot exist");
+            }
+        });    
+    });
+    // console.log(reqdUser);
+    
 })
 app.listen(8080,()=>{
     console.log("Server running on port 8080");
